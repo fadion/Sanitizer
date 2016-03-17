@@ -15,7 +15,7 @@ What's the use you're asking? User input is quite arbitrary! Even with guideline
 }
 ```
 
-Laravel users can add the ServiceProvider and Facade only for convenience. This step isn't needed for FormRequest.
+Laravel users can add the ServiceProvider and Facade for convenience. This step isn't needed for FormRequest.
 
 - Add `Fadion\Sanitizer\SanitizerServiceProvider::class` to your `config/app.php` file, inside the `providers` array.
 - Add a new alias: `'Sanitizer' => Fadion\Sanitizer\Facades\Sanitizer::class` to your `config/app.php` file, inside the `aliases` array.
@@ -50,7 +50,7 @@ $sanitizersSecond = [
 ];
 ```
 
-A few filters accept arguments, such as `date`, `number_format`, `limit`, `mask` and `int`. The syntax is described below:
+A few sanitizers accept arguments, such as `date`, `number_format`, `limit`, `mask` and `int`. The syntax is described below:
 
 ```php
 $sanitizers = [
@@ -63,7 +63,7 @@ $sanitizers = [
 
 ## Usage in Laravel
 
-First off, in Laravel you can directly use the Facade if that's your style. Just remember to include the ServiceProvider and Facade as in the instructions. After that, it's as easy as writing:
+In Laravel you can directly use the Facade if that's your style. Just remember to include the ServiceProvider and Facade as in the instructions. After that, it's as easy as writing:
 
 ```php
 $inputs = [/* some inputs */];
@@ -74,7 +74,7 @@ $newInputs = Sanitizer::run($inputs, $sanitizers);
 
 ## Usage in FormRequest
 
-Form requests are, to my opinion, a very good way of writing validation code. In addition to validation, you can use Sanitizer to clean and transform your input in a very intuitive way.
+Form requests are, in my opinion, a very good way of writing validation code. In addition to validation, you can use Sanitizer to clean and transform your inputs in a very intuitive way.
 
 You already know how to create a FormRequest and add rules to it. Let's see how to sanitize those inputs:
 
@@ -98,7 +98,7 @@ class UserRequest extends Request
     public function sanitizers()
     {
         return [
-            'name' => 'trim',
+            'name' => 'ucwords',
             'email' => 'trim|lower'
         ];
     }
@@ -109,4 +109,4 @@ You'll notice I've used the `Sanitizable` trait! That's what includes the needed
 
 ## Available Filters
 
-There are more than 30 available filters and most of them use native PHP functions. Refer to the `Filters.php` file for the whole list. Every method is documented, but the code is pretty simple for everyone to understand.
+There are more than 30 available filters and most of them use native PHP functions. Refer to the `Filters.php` file for the whole list. Every method is documented, but the code is pretty straightforward for everyone to understand.
