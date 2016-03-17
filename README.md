@@ -13,6 +13,7 @@ What's the use you're asking? User input is quite arbitrary! Even with guideline
         "fadion/sanitizer": "dev-master"
     }
 }
+```
 
 Laravel users can add the ServiceProvider and Facade only for convenience. This step isn't needed for FormRequest.
 
@@ -41,12 +42,12 @@ Both of these are valid:
 $sanitizersOne = [
     'name' => ['trim', 'ucfirst'],
     'age' => 'int'
-]
+];
 
 $sanitizersSecond = [
     'name' => 'trim|ucfirst',
     'age' => 'int'
-]
+];
 ```
 
 A few filters accept arguments, such as `date`, `number_format`, `limit`, `mask` and `int`. The syntax is described below:
@@ -57,7 +58,7 @@ $sanitizers = [
     'number' => 'number_format:3',
     'body' => 'limit:100',
     'credit_card' => 'mask:+'
-]
+];
 ```
 
 ## Usage in Laravel
@@ -66,7 +67,7 @@ First off, in Laravel you can directly use the Facade if that's your style. Just
 
 ```php
 $inputs = [/* some inputs */];
-$sanitizers = [/* some sanitizers */]
+$sanitizers = [/* some sanitizers */];
 
 $newInputs = Sanitizer::run($inputs, $sanitizers);
 ```
