@@ -2,6 +2,8 @@
 
 namespace Fadion\Sanitizer;
 
+use Closure;
+
 class Sanitizer
 {
     use Filters;
@@ -21,14 +23,19 @@ class Sanitizer
 
             if (count($rules) and isset($inputs[$input])) {
                 foreach ($rules as $rule) {
-                    list($rule, $argument) = $this->extractArgument($rule);
-                    $method = $this->methodName($rule);
-
-                    if (! method_exists($this, $method)) {
-                        throw new Exceptions\InvalidSanitizerException;
+                    if ($rule instanceof Closure) {
+                        $inputs[$input] = $rule($inputs[$input]);
                     }
+                    else {
+                        list($rule, $argument) = $this->extractArgument($rule);
+                        $method = $this->methodName($rule);
 
-                    $inputs[$input] = $this->$method($inputs[$input], $argument);
+                        if (! method_exists($this, $method)) {
+                            throw new Exceptions\InvalidSanitizerException;
+                        }
+
+                        $inputs[$input] = $this->$method($inputs[$input], $argument);
+                    }
                 }
             }
         }
@@ -39,13 +46,13 @@ class Sanitizer
     /**
      * Transform rules into an array.
      *
-     * @param array|string $rules
+     * @param mixed $rules
      * @return array
      */
     protected function flatten($rules)
     {
         if (! is_array($rules)) {
-            return explode('|', $rules);
+            return ($this->is_closure($rules)) ? [$rules] : explode('|', $rules);
         }
 
         return $rules;
@@ -77,5 +84,15 @@ class Sanitizer
     protected function methodName($rule)
     {
         return 'filter_'.strtolower(trim($rule));
+    }
+
+    /**
+     * Tests if a value is a closure.
+     *
+     * @param mixed $closure
+     * @return bool
+     */
+    protected function is_closure($closure) {
+        return $closure instanceof Closure;
     }
 }

@@ -59,4 +59,29 @@ class SanitizerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $sanitizer->run($inputs, $sanitizers));
     }
+
+    public function test_closure_sanitizer()
+    {
+        $inputs = [
+            'name' => 'john ',
+            'surname' => 'Smith'
+        ];
+        $sanitizers = [
+            'name' => ['trim', function($value) {
+                return ucfirst($value);
+            }],
+            'surname' => function($value) {
+                return str_replace('Smith', 'Cena', $value);
+            }
+        ];
+
+        $expected = [
+            'name' => 'John',
+            'surname' => 'Cena'
+        ];
+
+        $sanitizer = new Sanitizer;
+
+        $this->assertEquals($expected, $sanitizer->run($inputs, $sanitizers));
+    }
 }
