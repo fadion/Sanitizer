@@ -50,7 +50,7 @@ $sanitizersSecond = [
 ];
 ```
 
-For those cases when you need to run some custom code on an input, you can pass a closure as a sanitizer. These are one-time, anonymous sanitizers that can't be reused. As with the predefined ones, they can be combined with other sanitizers. Take a look at the following code:
+For those cases when you need to run some custom code on an input, you can pass a closure as a sanitizer. Don't confuse closure sanitizers with custom sanitizers; these are one-time, anonymous sanitizers that can't be reused. As with the predefined ones, they can be combined with other sanitizers. Take a look at the following code:
 
 ```php
 $sanitizers = [
@@ -119,6 +119,44 @@ class UserRequest extends Request
 ```
 
 You'll notice I've used the `Sanitizable` trait! That's what includes the needed functionality and will enable to define sanitizers. You'll also notice there's a `sanitizers()` method. Just return an array with the inputs as keys and Sanitizer will do its job automatically.
+
+## Custom Sanitizers
+
+For most, the predefined sanitizers are all they'll ever need. However, in some rare occassion you may need to run some specific code more than once and it may come in handy to register it as a custom sanitizer. Just remember that complicated logic doesn't belong to the Sanitizer or a FormRequest. Use these only for simple, trival transformations.
+
+### Standalone
+
+Call the static register method anywhere in your code, but before the sanitizer is to be used.
+
+```php
+\Fadion\Sanitizer\Sanitizer::register('upper_some', function($value) {
+    $some = mt_rand(1, strlen($value) - 1);
+    return strtoupper(substr($value, 0, $some)).substr($value, $some);
+});
+```
+
+### Laravel
+
+The best place to register a custom sanitizer would be in a Service Provider. It can either be a custom, dedicated provider (ie: SanitizerServiceProvider) or in the more general `AppServiceProvider`. Whatever you choose, write your code inside the `boot()` method:
+
+```php
+// some service provider
+public function boot()
+{
+    \Fadion\Sanitizer\Sanitizer::register('upper_some', function($value) {
+        $some = mt_rand(1, strlen($value) - 1);
+        return strtoupper(substr($value, 0, $some)).substr($value, $some);
+    });
+}
+```
+
+The register method accepts a name and a closure. You can register as many custom sanitizers as you need and even override the predefined ones. Now you can use the newly created sanitizer everywhere in your code:
+
+```php
+$sanitizers = [
+    'name' => 'trim|upper_some'
+];
+```
 
 ## Available Filters
 
