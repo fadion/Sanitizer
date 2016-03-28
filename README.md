@@ -50,6 +50,19 @@ $sanitizersSecond = [
 ];
 ```
 
+For those cases when you need to run some custom code on an input, you can pass a closure as a sanitizer. These are one-time, anonymous sanitizers that can't be reused. As with the predefined ones, they can be combined with other sanitizers. Take a look at the following code:
+
+```php
+$sanitizers = [
+    'name' => ['trim', function($value) {
+        return str_replace('John', 'Will', $value);
+    }],
+    'age' => function($value) {
+        return $value + 100;
+    }
+];
+```
+
 A few sanitizers accept arguments, such as `date`, `number_format`, `limit`, `mask` and `int`. The syntax is described below:
 
 ```php
