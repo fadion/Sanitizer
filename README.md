@@ -10,7 +10,7 @@ What's the use you're asking? User input is quite arbitrary! Even with guideline
 ```json
 {
     "require": {
-        "fadion/sanitizer": "dev-master"
+        "fadion/sanitizer": "~1.0"
     }
 }
 ```
